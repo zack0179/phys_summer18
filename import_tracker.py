@@ -50,11 +50,14 @@ def yada(path):
         print(key)
         for val in imports[key]:
             if type(val) is list:
+                state = "    "
                 for v in val:
-                    if type(v) is dict:
-                        print("        edge: " + v["edge"])
+                    if type(v) is not dict:
+                        state += v
                     else:
-                        print("    " + v)
+                        state = state[:-5] + ": " + v["edge"]
+                    state += "\n    "
+                print(state[:-5])
             else:
                 print("    " + val)
 
@@ -63,5 +66,5 @@ def yada(path):
 
 if __name__ == "__main__":
     path = "/home/zes5027/GIT/fitpack"
-
+#    path = r"C:\Users\Aardvark\Documents\GIT\fitpack"
     imports = yada(path)
