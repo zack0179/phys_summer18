@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jun 14 18:33:00 2018
-
-@author: Tiffany
-"""
 from __future__ import print_function
 import os
 
@@ -24,7 +18,11 @@ def yada(path):
                     words = line.strip().split()
                     if len(words) < 2:
                         continue
-                    first, second, *rest = words
+                    if len(words) == 2:
+                        first, second = words
+                        rest = []
+                    else:
+                        first, second, rest = words[0], words[1], words[2:]
                     if first == "from":
                         if "as" in rest:
                             edge = " ".join(rest[1:rest.index("as")])
@@ -44,7 +42,7 @@ def yada(path):
                     rest = " ".join(rest)
                     if ";" in rest:
                         extras += rest.split(";")[1:]
-                file_lines = extras.copy()
+                file_lines = extras
                 extras = []
 
     # Show your work
@@ -64,6 +62,6 @@ def yada(path):
 
 
 if __name__ == "__main__":
-    path = r"C:\Users\Aardvark\Documents\GIT\fitpack"
+    path = "/home/zes5027/GIT/fitpack"
 
     imports = yada(path)
