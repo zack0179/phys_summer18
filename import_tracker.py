@@ -30,10 +30,7 @@ def yada(path):
                             edge = " ".join(rest[1:rest.index("#")])
                         else:
                             edge = "".join(rest[1:]).replace(",", ", ")
-                        imports[parent_file].append([second,
-                                                     {"edge":
-                                                         edge}
-                                                     ])
+                        imports[parent_file].append([second, edge])
                     elif first == "import":
                         for module in second.split(","):
                             imports[parent_file].append(module
@@ -46,18 +43,39 @@ def yada(path):
                 extras = []
 
     # Show your work
+#    for key in imports.keys():
+#        print(key)
+#        for val in imports[key]:
+#            if type(val) is list:
+#                print("    " + val[0] + ": " + val[1])
+#            else:
+#                print("    " + val)
+
+    # Consolidate your work
+    for key in imports.keys():
+        val = [val for val in imports[key]
+               if (type(val) is list)]
+        trash = []
+        for v in val:
+            if imports[key].index(v) + 1 < len(imports[key]):
+                if imports[key][imports[key].index(v) + 1][0] == v[0]:
+                    i = imports[key].index(v) + 1
+                    imports[key][i - 1] = [v[0],
+                                           v[1] + ", " +
+                                           imports[key]
+                                           [i][1]]
+                    trash.append(i)
+        n = 0
+        for i in trash:
+            del imports[key][i - n]
+            n += 1
+
+    # Show your work
     for key in imports.keys():
         print(key)
         for val in imports[key]:
             if type(val) is list:
-                state = "    "
-                for v in val:
-                    if type(v) is not dict:
-                        state += v
-                    else:
-                        state = state[:-5] + ": " + v["edge"]
-                    state += "\n    "
-                print(state[:-5])
+                print("    " + val[0] + ": " + val[1])
             else:
                 print("    " + val)
 
@@ -65,6 +83,6 @@ def yada(path):
 
 
 if __name__ == "__main__":
-    path = "/home/zes5027/GIT/fitpack"
-#    path = r"C:\Users\Aardvark\Documents\GIT\fitpack"
+#    path = "/home/zes5027/GIT/fitpack"
+    path = r"C:\Users\Aardvark\Documents\GIT\fitpack"
     imports = yada(path)
