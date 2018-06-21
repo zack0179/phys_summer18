@@ -52,23 +52,20 @@ def yada(path):
 #                print("    " + val)
 
     # Consolidate your work
-    for key in imports.keys():
-        val = [val for val in imports[key]
-               if (type(val) is list)]
-        trash = []
-        for v in val:
-            if imports[key].index(v) + 1 < len(imports[key]):
-                if imports[key][imports[key].index(v) + 1][0] == v[0]:
-                    i = imports[key].index(v) + 1
-                    imports[key][i - 1] = [v[0],
-                                           v[1] + ", " +
-                                           imports[key]
-                                           [i][1]]
-                    trash.append(i)
-        n = 0
-        for i in trash:
-            del imports[key][i - n]
-            n += 1
+    reduced = False
+    while not reduced:
+        reduced = True
+        for key in imports.keys():
+            for i, val_i in zip(range(len(imports[key])), imports[key]):
+                if type(val_i) is list:
+                    n = i + 1
+                    if n <= len(imports[key]) - 1:
+                        val_n = imports[key][n]
+                        if val_i[0] == val_n[0]:
+                            imports[key][n] = [val_i[0], val_i[1] + ", " + val_n[1]]
+                            del imports[key][i]
+                            reduced = False
+
 
     # Show your work
     for key in imports.keys():
