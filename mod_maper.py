@@ -105,6 +105,7 @@ def import_tracker(path):
     line_tree = get_line_tree(file_tree)
     import_tree = get_import_tree(line_tree)
 
+    #  represent you work
     keys = [key for key in import_tree.keys()]
     keys.sort()
     for k in keys:
@@ -113,32 +114,21 @@ def import_tracker(path):
             continue
         else:
             for d in import_tree[k].keys():
-                print("    " + d + ": " + str(import_tree[k][d]))
+                if import_tree[k][d] == []:
+                    print("    " + d)
+                else:
+                    print("    " + d + ": " + ",  ".join(import_tree[k][d]))
     return import_tree
-
-
-
-
 
 
 if __name__ == "__main__":
 
-
-#    path = "/home/zes5027/GIT/fitpack"
+    #  path = "/home/zes5027/GIT/fitpack"
     path = r"C:\Users\Aardvark\Documents\GIT\fitpack"
     file_tree = get_file_tree(path)
     line_tree = get_line_tree(file_tree)
     import_tree = get_import_tree(line_tree)
 
-    keys = [key for key in import_tree.keys()]
-    keys.sort()
-    for k in keys:
-        print(k)
-        if not import_tree[k]:
-            continue
-        else:
-            for d in import_tree[k].keys():
-                print("    " + d + ": " + str(import_tree[k][d]))
 
 
 
