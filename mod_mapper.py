@@ -32,15 +32,28 @@ def cut_as(words):
     return words[:(None if "as" not in words else words.index("as"))]
 
 
-def extract_import(words):
-    return words[(None if "import" != words[0] else 1):]
+def gen_import(words):
+    if "import" in words:
+        for i in words[words.index("import") + 1:]:
+            yield i
+
+
+def parser(words):
+    if "from" in words:
+        return [words[1], words[3:]]
+    else:
+        return [[i, []] for i in gen_import(words)]
 
 
 def find_dependencies(dir_path):
-    return {f: filter(contains_import, (cut_as(cut_comment(words_in_line(line))
-                                               )
-                                        for line in lines_in_file(f)))
+    return {f: map(parser, (filter(
+                            contains_import, (cut_as(
+                                              cut_comment(words_in_line(line)))
+                                              for line in lines_in_file(f)))))
             for f in get_files(dir_path)}
+
+
+
 
 
 if __name__ == "__main__":
@@ -49,5 +62,7 @@ if __name__ == "__main__":
     dir_path = r"/home/zack0179/Documents/GIT/fitpack"
 
     ploiu = find_dependencies(dir_path)
+
+   ploiu['/home/zack0179/Documents/GIT/fitpack/fitlab/parman.py'][1]
 
 #  sum(any(";" in x for x in y) and not (print(k)) for k, y in ploiu.items())
