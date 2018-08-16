@@ -4,10 +4,13 @@ import os
 import re
 
 
-def get_files(dir_path):
+def get_files(dir_path, specifics=None):
+    # names in specifics will be included, additionally
+    if specifics is None:
+        specifics = set()
     for root, dirs, files in os.walk(dir_path):
         for file in files:
-            if file.endswith(".py"):
+            if file.endswith(".py") or file in specifics:
                 yield os.path.join(root, file)
 
 
@@ -17,7 +20,7 @@ def lines_in_file(file_path):
 
 
 def words_in_line(line):
-    return re.findall(r"[\w.]+|#", line)  # |;
+    return re.findall(r"[\w.]+|#", line)  # XXX: note that ';' is not treated
 
 
 def contains_import(words):
@@ -40,29 +43,23 @@ def gen_import(words):
 
 def parser(words):
     if "from" in words:
-        return [words[1], words[3:]]
+        return [[words[1], words[3:]]]
     else:
         return [[i, []] for i in gen_import(words)]
 
 
-def find_dependencies(dir_path):
-    return {f: map(parser, (filter(
-                            contains_import, (cut_as(
-                                              cut_comment(words_in_line(line)))
-                                              for line in lines_in_file(f)))))
-            for f in get_files(dir_path)}
-
-
-
+def find_dependencies(dir_path, specifics=None):
+    return {
+        f.replace(dir_path, ""):
+            reduce(list.__add__,
+                   map(parser,
+                       filter(contains_import,
+                              (cut_as(cut_comment(words_in_line(line)))
+                               for line in lines_in_file(f)))), [])
+            for f in get_files(dir_path, specifics)}
 
 
 if __name__ == "__main__":
-    # dir_path = "/home/zes5027/GIT/fitpack"
-    # dir_path = r"C:\Users\Aardvark\Documents\GIT\fitpack"
-    dir_path = r"/home/zack0179/Documents/GIT/fitpack"
+    dir_path = r"/home/mda5232/git/fitpack"
 
-    ploiu = find_dependencies(dir_path)
-
-   ploiu['/home/zack0179/Documents/GIT/fitpack/fitlab/parman.py'][1]
-
-#  sum(any(";" in x for x in y) and not (print(k)) for k, y in ploiu.items())
+    deps = find_dependencies(dir_path, {"jam3d", "mcproc", "run_notebook"})
